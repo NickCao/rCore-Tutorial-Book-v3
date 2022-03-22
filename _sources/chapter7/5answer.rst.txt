@@ -227,6 +227,49 @@
         }
 
 2. `**` 分别编写基于UNIX的signal机制的Linux应用程序，实现进程间异步通知。
+
+    .. code-block:: c
+        :linenos:
+
+        #include <unistd.h>
+        #include <stdio.h>
+        #include <stdlib.h>
+        #include <signal.h>
+        
+        static void sighandler(int sig) {
+          printf("received signal %d, exiting\n", sig);
+          exit(EXIT_SUCCESS);
+        }
+        
+        int main(void) {
+          struct sigaction sa;
+          sa.sa_handler = sighandler;
+          sa.sa_flags = 0;
+          sigemptyset(&sa.sa_mask);
+          // register function sighandler as signal handler for SIGUSR1
+          if (sigaction(SIGUSR1, &sa, NULL) != 0) {
+            perror("failed to register signal handler");
+            exit(EXIT_FAILURE);
+          }
+        
+          int pid = fork();
+          if (pid == -1) {
+            perror("failed to fork");
+            exit(EXIT_FAILURE);
+          }
+        
+          if (pid == 0) {
+            while (1) {
+              // loop and wait for signal
+            }
+          } else {
+            // send SIGUSR1 to child process
+            kill(pid, SIGUSR1);
+          }
+        
+          return EXIT_SUCCESS;
+        }
+
 3. `**` 参考rCore Tutorial 中的shell应用程序，在Linux环境下，编写一个简单的shell应用程序，通过管道相关的系统调用，能够支持管道功能。
 4. `**` 扩展内核，实现共享内存机制。
 5. `***` 扩展内核，实现signal机制。
