@@ -11,6 +11,7 @@
 1. `*` 分别编写基于UNIX System V IPC的管道、共享内存、信号量和消息队列的Linux应用程序，实现进程间的数据交换。
 
     管道
+
     .. code-block:: c
         :linenos:
 

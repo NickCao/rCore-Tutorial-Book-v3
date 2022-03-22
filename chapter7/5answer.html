@@ -247,62 +247,51 @@ commentsRunWhenDOMLoaded(addUtterances);
 <ol class="arabic">
 <li><p><cite>*</cite> 分别编写基于UNIX System V IPC的管道、共享内存、信号量和消息队列的Linux应用程序，实现进程间的数据交换。</p>
 <blockquote>
-<div><p>管道
-.. code-block:: c</p>
-<blockquote>
-<div><dl class="field-list simple">
-<dt class="field-odd">linenos</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-<p>#include &lt;unistd.h&gt;
-#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;string.h&gt;</p>
-<dl>
-<dt>int main(void) {</dt><dd><p>int pipefd[2];
-// pipe syscall creates a pipe with two ends
-// pipefd[0] is the read end
-// pipefd[1] is the write end
-// ref: <a class="reference external" href="https://man7.org/linux/man-pages/man2/pipe.2.html">https://man7.org/linux/man-pages/man2/pipe.2.html</a>
-if (pipe(pipefd) == -1) {</p>
-<blockquote>
-<div><p>perror(“failed to create pipe”);
-exit(EXIT_FAILURE);</p>
-</div></blockquote>
-<p>}</p>
-<p>int pid = fork();
-if (pid == -1) {</p>
-<blockquote>
-<div><p>perror(“failed to fork”);
-exit(EXIT_FAILURE);</p>
-</div></blockquote>
-<p>}</p>
-<dl>
-<dt>if (pid == 0) {</dt><dd><p>// child process reads from the pipe
-close(pipefd[1]); // close the write end
-// read a byte at a time
-char buf;
-while (read(pipefd[0], &amp;buf, 1) &gt; 0) {</p>
-<blockquote>
-<div><p>printf(“%s”, &amp;buf);</p>
-</div></blockquote>
-<p>}
-close(pipefd[0]); // close the read end</p>
-</dd>
-<dt>} else {</dt><dd><p>// parent process writes to the pipe
-close(pipefd[0]); // close the read end
-// parent writes
-char* msg = “hello from pipen”;
-write(pipefd[1], msg, strlen(msg)); // omitting error handling
-close(pipefd[1]); // close the write end</p>
-</dd>
-</dl>
-<p>}</p>
-<p>return EXIT_SUCCESS;</p>
-</dd>
-</dl>
-<p>}</p>
-</div></blockquote>
+<div><p>管道</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;unistd.h&gt;</span><span class="cp"></span>
+<span class="linenos"> 2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="linenos"> 3</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+<span class="linenos"> 4</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string.h&gt;</span><span class="cp"></span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">pipefd</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">  </span><span class="c1">// pipe syscall creates a pipe with two ends</span>
+<span class="linenos"> 9</span><span class="w">  </span><span class="c1">// pipefd[0] is the read end</span>
+<span class="linenos">10</span><span class="w">  </span><span class="c1">// pipefd[1] is the write end</span>
+<span class="linenos">11</span><span class="w">  </span><span class="c1">// ref: https://man7.org/linux/man-pages/man2/pipe.2.html</span>
+<span class="linenos">12</span><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pipe</span><span class="p">(</span><span class="n">pipefd</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="linenos">13</span><span class="w">    </span><span class="n">perror</span><span class="p">(</span><span class="s">&quot;failed to create pipe&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="linenos">14</span><span class="w">    </span><span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span><span class="w"></span>
+<span class="linenos">15</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="linenos">16</span>
+<span class="linenos">17</span><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">pid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fork</span><span class="p">();</span><span class="w"></span>
+<span class="linenos">18</span><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pid</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="linenos">19</span><span class="w">    </span><span class="n">perror</span><span class="p">(</span><span class="s">&quot;failed to fork&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="linenos">20</span><span class="w">    </span><span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span><span class="w"></span>
+<span class="linenos">21</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="linenos">22</span>
+<span class="linenos">23</span><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pid</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="linenos">24</span><span class="w">    </span><span class="c1">// child process reads from the pipe</span>
+<span class="linenos">25</span><span class="w">    </span><span class="n">close</span><span class="p">(</span><span class="n">pipefd</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span><span class="w"> </span><span class="c1">// close the write end</span>
+<span class="linenos">26</span><span class="w">    </span><span class="c1">// read a byte at a time</span>
+<span class="linenos">27</span><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">buf</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">28</span><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">read</span><span class="p">(</span><span class="n">pipefd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="linenos">29</span><span class="w">      </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">buf</span><span class="p">);</span><span class="w"></span>
+<span class="linenos">30</span><span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="linenos">31</span><span class="w">    </span><span class="n">close</span><span class="p">(</span><span class="n">pipefd</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span><span class="w"> </span><span class="c1">// close the read end</span>
+<span class="linenos">32</span><span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="linenos">33</span><span class="w">    </span><span class="c1">// parent process writes to the pipe</span>
+<span class="linenos">34</span><span class="w">    </span><span class="n">close</span><span class="p">(</span><span class="n">pipefd</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span><span class="w"> </span><span class="c1">// close the read end</span>
+<span class="linenos">35</span><span class="w">    </span><span class="c1">// parent writes</span>
+<span class="linenos">36</span><span class="w">    </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;hello from pipe</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">37</span><span class="w">    </span><span class="n">write</span><span class="p">(</span><span class="n">pipefd</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">msg</span><span class="p">));</span><span class="w"> </span><span class="c1">// omitting error handling</span>
+<span class="linenos">38</span><span class="w">    </span><span class="n">close</span><span class="p">(</span><span class="n">pipefd</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span><span class="w"> </span><span class="c1">// close the write end</span>
+<span class="linenos">39</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="linenos">40</span>
+<span class="linenos">41</span><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">EXIT_SUCCESS</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">42</span><span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
 </div></blockquote>
 </li>
 <li><p><cite>**</cite> 分别编写基于UNIX的signal机制的Linux应用程序，实现进程间异步通知。</p></li>
