@@ -597,7 +597,7 @@ commentsRunWhenDOMLoaded(addUtterances);
 <ol class="arabic">
 <li><p><cite>*</cite> 直接通信和间接通信的本质区别是什么？分别举一个例子。</p>
 <blockquote>
-<div><p>本质区别是消息是否进过内核，如共享内存就是直接通信，消息队列则是间接通信。</p>
+<div><p>本质区别是消息是否经过内核，如共享内存就是直接通信，消息队列则是间接通信。</p>
 </div></blockquote>
 </li>
 <li><p><cite>**</cite> 试说明基于UNIX的signal机制，如果在本章内核中实现，请描述其大致设计思路和运行过程。</p>
@@ -630,14 +630,18 @@ commentsRunWhenDOMLoaded(addUtterances);
 <div><p>会产生SIGINT，如果该程序没有捕获该信号，它将会被杀死，若捕获了，通常会在处理完或是取消当前正在进行的操作后主动退出。</p>
 </div></blockquote>
 </li>
-<li><p><cite>**</cite> 请描述Linux的bash shell中执行与一个程序时，用户敲击 <cite>Ctrl+Zombie</cite> 后，会产生什么信号（signal），导致什么情况出现。</p></li>
+<li><p><cite>**</cite> 请描述Linux的bash shell中执行与一个程序时，用户敲击 <cite>Ctrl+Zombie</cite> 后，会产生什么信号（signal），导致什么情况出现。</p>
+<blockquote>
+<div><p>会产生SIGTSTP，该进程将会暂停运行，将控制权重新转回shell。</p>
+</div></blockquote>
+</li>
 <li><p><cite>**</cite> 请描述Linux的bash shell中执行 <cite>kill -9 2022</cite> 这个命令的含义是什么？导致什么情况出现。</p>
 <blockquote>
 <div><p>向pid为2022的进程发送SIGKILL，该信号无法被捕获，该进程将会被强制杀死。</p>
 </div></blockquote>
 </li>
 <li><p><cite>**</cite> 请指出一种跨计算机的主机间的进程间通信机制。</p>
-<p>Sun RPC</p>
+<p>一个在过去较为常用的例子是Sun RPC。</p>
 </li>
 </ol>
 <div class="section" id="id4">
